@@ -15,3 +15,32 @@
 
 // 4. Colocar o botão dentro do <li>
 // → usar appendChild()
+
+const botao = document.getElementById("botao")
+let lista = document.getElementById("lista")
+const texto = document.getElementById("inputTexto")
+
+botao.addEventListener("click", function() {
+    let li = document.createElement("li")
+    let botaoRemover = document.createElement("button")
+    let botaoConcluir = document.createElement("button")
+
+    li.textContent = texto.value
+    lista.appendChild(li)
+    texto.value = ""
+
+    botaoRemover.textContent = "Remover"
+    botaoConcluir.textContent = "Concluir"
+
+    botaoRemover.addEventListener("click", function() {
+        li.remove()
+    })
+    li.appendChild(botaoRemover)
+
+    botaoConcluir.addEventListener("click", function(){
+        li.style.textDecoration = "line-through"
+        li.style.color = "gray"
+    })
+
+    li.appendChild(botaoConcluir)
+})
