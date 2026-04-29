@@ -29,3 +29,89 @@
 // → chamar salvar() ao:
 //    - adicionar item
 //    - Carregar a página
+
+
+const botao = document.getElementById("botao")
+let lista = document.getElementById("lista")
+const texto = document.getElementById("inputTexto")
+
+function atualizarEstiloConcluido(li, concluido) {
+    if (concluido) {
+        li.style.textDecoration = "line-through"
+        li.style.color = "gray"
+    } else {
+        li.style.textDecoration = ""
+        li.style.color = ""
+    }
+}
+
+function criarItem(textoTarefa, concluido = false) {
+    const li = document.createElement("li")
+    const textoSpan = document.createElement("span")
+    const botaoRemover = document.createElement("button")
+    const botaoConcluir = document.createElement("button")
+
+    textoSpan.textContent = textoTarefa
+    li.appendChild(textoSpan)
+
+    botaoRemover.textContent = "Remover"
+    botaoConcluir.textContent = "Concluir"
+
+    botaoRemover.addEventListener("click", function() {
+        li.remove()
+        salvar()
+    })
+
+    botaoConcluir.addEventListener("click", function() {
+        const estaConcluido = li.style.textDecoration === "line-through"
+        atualizarEstiloConcluido(li, !estaConcluido)
+        salvar()
+    })
+
+    li.appendChild(botaoRemover)
+    li.appendChild(botaoConcluir)
+
+    atualizarEstiloConcluido(li, concluido)
+    return li
+}
+
+botao.addEventListener("click", function() {
+    const valor = texto.value.trim()
+    if (valor === "") {
+        return
+    }
+
+    const li = criarItem(valor)
+    lista.appendChild(li)
+    texto.value = ""
+    salvar()
+})
+
+function salvar() {
+    const itens = []
+    const liElements = lista.querySelectorAll("li")
+
+    liElements.forEach(function(li) {
+        const textoSpan = li.querySelector("span")
+        const concluido = li.style.textDecoration === "line-through"
+        itens.push({
+            texto: textoSpan ? textoSpan.textContent : "",
+            concluido: concluido
+        })
+    })
+
+    localStorage.setItem("item", JSON.stringify(itens))
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const itensSalvos = localStorage.getItem("item")
+    if (itensSalvos) {
+        const itens = JSON.parse(itensSalvos)
+        itens.forEach(function(item) {
+            const li = criarItem(item.texto, item.concluido)
+            lista.appendChild(li)
+        })
+    }
+
+    salvar()
+})
